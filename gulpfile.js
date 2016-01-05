@@ -19,11 +19,18 @@ var browserify = require('browserify');
 var eslint = require('gulp-eslint');
 var ghPages = require('gulp-gh-pages');
 var gulp = require('gulp');
+var connect = require('gulp-connect');
 var source = require('vinyl-source-stream');
 var temp = require('temp').track();
 
 var buildSources = ['lib/**/*.js'];
 var lintSources = buildSources.concat(['gulpfile.js', 'recipes/**/*.js']);
+
+gulp.task('test', function() {
+  connect.server({
+    port: 8888
+  });
+});
 
 gulp.task('build', function() {
   var bundler = browserify({
