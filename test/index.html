@@ -29,6 +29,8 @@
   })</script>
   <script src="/test/tests/precache.js"></script>
   <script>
+    var passedTests = [];
+    var failedTests = [];
 
     function getFriendlyTestResult(testResult) {
       return {
@@ -37,26 +39,42 @@
       };
     };
 
-    mocha.checkLeaks();
-    mocha.globals(['SWTestHelper']);
-
-    var passedTests = [];
-    var failedTests = [];
-    mocha.run()
-    .on('pass', function(test) {
-      passedTests.push(getFriendlyTestResult(test));
-    })
-    .on('fail', function(test) {
-      failedTests.push(getFriendlyTestResult(test));
-    })
-    .on('end', function() {
+    function publishTestResults() {
       window.swtoolbox = {
         testResults: {
           passed: passedTests,
           failed: failedTests
         }
       };
-    });
+    }
+
+    mocha.checkLeaks();
+    mocha.globals(['SWTestHelper']);
+
+
+    var runResults = mocha.run();
+
+    // If there are no tests we should defined swtoolbox + testResults
+    // so the automated test suite will know the test has ended
+    if (runResults.total === 0) {
+      publishTestResults();
+    } else {
+      runResults.on('pass', function(test) {
+        passedTests.push(getFriendlyTestResult(test));
+      })
+      .on('fail', function(test) {
+        failedTests.push(getFriendlyTestResult(test));
+      })
+      .on('end', function() {
+        console.log('on end');
+        window.swtoolbox = {
+          testResults: {
+            passed: passedTests,
+            failed: failedTests
+          }
+        };
+      });
+    }
   </script>
 </body>
 </html>

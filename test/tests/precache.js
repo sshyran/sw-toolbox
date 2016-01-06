@@ -26,6 +26,14 @@ window.chai.should();
 var testHelper = window.SWTestHelper;
 
 describe('Test SW-Toolbox', () => {
+  // This make browsers without a service worker pass by
+  // bypassing the tests altogether.
+  // This is desirable to allow travis to run tests in all browsers
+  // regardless of support or not and track over time.
+  if (!('serviceWorker' in navigator)) {
+    return;
+  }
+
   beforeEach(function(done) {
     Promise.all([
       testHelper.unregisterAllRegistrations(),
