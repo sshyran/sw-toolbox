@@ -3,7 +3,7 @@
   "version": "3.0.1",
   "license": "Apache-2.0",
   "scripts": {
-    "test": "gulp lint"
+    "test": "gulp lint && gulp test:automated"
   },
   "main": "lib/sw-toolbox.js",
   "repository": "https://github.com/GoogleChrome/sw-toolbox",
@@ -21,8 +21,10 @@
     "eslint-config-google": "^0.3.0",
     "gulp": "^3.9.0",
     "gulp-connect": "^2.3.1",
+    "gulp-connect-multi": "^1.0.8",
     "gulp-eslint": "^1.1.1",
     "gulp-gh-pages": "^0.5.4",
+    "gulp-open": "^1.0.0",
     "jshint-stylish": "^2.1.0",
     "minifyify": "^7.1.0",
     "mocha": "^2.3.4",

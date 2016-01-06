@@ -27,14 +27,14 @@ var mocha = require('gulp-mocha');
 var buildSources = ['lib/**/*.js'];
 var lintSources = buildSources.concat(['gulpfile.js', 'recipes/**/*.js']);
 
-gulp.task('test-server', function() {
+gulp.task('test:manual', function() {
   return connect.server({
     port: 8888
   });
 });
 
-gulp.task('test', ['test-server'], function() {
-  return gulp.src('test/webdriver.js', {read: false})
+gulp.task('test:automated', ['test:manual'], function() {
+  return gulp.src('test/tests/automated-suite.js', {read: false})
     .pipe(mocha({
       timeout: 10000
     }))
