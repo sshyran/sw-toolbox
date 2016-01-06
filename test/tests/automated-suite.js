@@ -28,32 +28,28 @@ require('chai').should();
 /* eslint-env node,mocha */
 
 describe('Test SW-Toolbox', () => {
-  var webDriver;
-  before(function() {
-    webDriver = new webdriver
-      .Builder()
-      .withCapabilities({
-        browserName: 'firefox'
-      })
-      .build();
-  });
-
-  after(function(done) {
-    webDriver.quit()
+  var driver;
+  afterEach(function(done) {
+    driver.quit()
     .then(() => done(), done);
   });
 
-  it('should pass all tests in Firefox', done => {
-
-    new Promise(resolve => {
-      webDriver.get('http://localhost:8888/test/')
+  var performTests = function(browserName) {
+    driver = new webdriver
+      .Builder()
+      .withCapabilities({
+        browserName: browserName
+      })
+      .build();
+    return new Promise(resolve => {
+      driver.get('http://localhost:8888/test/')
       .then(function() {
-        return webDriver.wait(function() {
-          return webDriver.executeScript('return ((typeof window.swtoolbox !== \'undefined\') && window.swtoolbox.testResults !== \'undefined\');');
+        return driver.wait(function() {
+          return driver.executeScript('return ((typeof window.swtoolbox !== \'undefined\') && window.swtoolbox.testResults !== \'undefined\');');
         });
       })
       .then(() => {
-        return webDriver.executeScript('return window.swtoolbox.testResults;');
+        return driver.executeScript('return window.swtoolbox.testResults;');
       })
       .then(testResults => {
         resolve(testResults);
@@ -75,7 +71,21 @@ describe('Test SW-Toolbox', () => {
         errorMsg += '------------------------------------------------\n';
         throw new Error(errorMsg);
       }
+    });
+  };
+
+  it('should pass all tests in Chrome', done => {
+    performTests('chrome')
+    .then(() => {
+      done();
     })
+    .catch(err => {
+      done(err);
+    });
+  });
+
+  it('should pass all tests in Firefox', done => {
+    performTests('firefox')
     .then(() => {
       done();
     })
