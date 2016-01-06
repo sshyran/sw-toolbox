@@ -7,7 +7,7 @@ language: node_js
 node_js:
   - 'stable'
 addons:
-  firefox: stable
+  firefox: latest
   apt:
     sources:
       - google-chrome
