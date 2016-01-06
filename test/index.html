@@ -24,12 +24,39 @@
 
   <script src="/test/libs/helper-functions.js"></script>
 
-  <script>mocha.setup('bdd')</script>
+  <script>mocha.setup({
+    ui: 'bdd'
+  })</script>
   <script src="/test/tests/precache.js"></script>
   <script>
+
+    function getFriendlyTestResult(testResult) {
+      return {
+        title: testResult.title,
+        state: testResult.state
+      };
+    };
+
     mocha.checkLeaks();
     mocha.globals(['SWTestHelper']);
-    mocha.run();
+
+    var passedTests = [];
+    var failedTests = [];
+    mocha.run()
+    .on('pass', function(test) {
+      passedTests.push(getFriendlyTestResult(test));
+    })
+    .on('fail', function(test) {
+      failedTests.push(getFriendlyTestResult(test));
+    })
+    .on('end', function() {
+      window.swtoolbox = {
+        testResults: {
+          passed: passedTests,
+          failed: failedTests
+        }
+      };
+    });
   </script>
 </body>
 </html>

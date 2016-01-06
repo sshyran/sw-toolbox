@@ -23,7 +23,7 @@
 /* eslint-env browser, mocha */
 
 window.chai.should();
-const testHelper = window.SWTestHelper;
+var testHelper = window.SWTestHelper;
 
 describe('Test SW-Toolbox', () => {
   beforeEach(function(done) {
@@ -55,7 +55,7 @@ describe('Test SW-Toolbox', () => {
 
   describe('Test precache method', () => {
     it('should precache all desired assets in precache-1', done => {
-      let assetList = [];
+      var assetList = [];
       fetch('/test/data/precache-1/assets.json')
       .then(request => {
         return request.json();

@@ -8,13 +8,15 @@
   "main": "lib/sw-toolbox.js",
   "repository": "https://github.com/GoogleChrome/sw-toolbox",
   "dependencies": {
-    "serviceworker-cache-polyfill": "coonsta/cache-polyfill",
-    "path-to-regexp": "^1.0.1"
+    "gulp-mocha": "^2.2.0",
+    "path-to-regexp": "^1.0.1",
+    "serviceworker-cache-polyfill": "coonsta/cache-polyfill"
   },
   "devDependencies": {
     "browserify": "^12.0.1",
     "browserify-header": "^0.9.2",
     "chai": "^3.4.1",
+    "dalek-browser-chrome": "0.0.11",
     "eslint": "^1.10.3",
     "eslint-config-google": "^0.3.0",
     "gulp": "^3.9.0",
@@ -25,6 +27,7 @@
     "minifyify": "^7.1.0",
     "mocha": "^2.3.4",
     "qunitjs": "^1.20.0",
+    "selenium-webdriver": "^2.48.2",
     "temp": "^0.8.3",
     "vinyl-source-stream": "^1.1.0"
   }

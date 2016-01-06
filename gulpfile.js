@@ -22,14 +22,28 @@ var gulp = require('gulp');
 var connect = require('gulp-connect');
 var source = require('vinyl-source-stream');
 var temp = require('temp').track();
+var mocha = require('gulp-mocha');
 
 var buildSources = ['lib/**/*.js'];
 var lintSources = buildSources.concat(['gulpfile.js', 'recipes/**/*.js']);
 
-gulp.task('test', function() {
-  connect.server({
+gulp.task('test-server', function() {
+  return connect.server({
     port: 8888
   });
+});
+
+gulp.task('test', ['test-server'], function() {
+  return gulp.src('test/webdriver.js', {read: false})
+    .pipe(mocha({
+      timeout: 10000
+    }))
+    .once('error', () => {
+      connect.serverClose();
+    })
+    .once('end', () => {
+      connect.serverClose();
+    });
 });
 
 gulp.task('build', function() {
