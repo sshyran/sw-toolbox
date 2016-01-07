@@ -19,7 +19,7 @@
 // This is a test and we want descriptions to be useful, if this
 // breaks the max-length, it's ok.
 
-/* eslint-disable max-len */
+/* eslint-disable max-len, no-lonely-if */
 /* eslint-env browser, mocha */
 
 window.chai.should();
@@ -62,25 +62,103 @@ describe('Test SW-Toolbox', () => {
   });
 
   describe('Test precache method', () => {
-    it('should precache all desired assets in precache-1', done => {
-      var assetList = [];
-      fetch('/test/data/precache-1/assets.json')
-      .then(request => {
-        return request.json();
-      })
-      .then(response => {
-        assetList = response.assets;
-        return testHelper.activateSW('/test/data/precache-1/sw.js');
-      })
+    it('should precache all desired assets in precache-valid', done => {
+      var assetList = [
+        '/test/data/files/text.txt',
+        '/test/data/files/image.png'
+      ];
+      testHelper.activateSW('/test/data/precache-valid/sw.js')
       .then(() => {
-        return testHelper.getAllCachedAssets('precache-1');
+        return testHelper.getAllCachedAssets('precache-valid');
       })
       .then(cachedAssets => {
-        window.debug = assetList;
         var cachedAssetsKeys = Object.keys(cachedAssets);
         cachedAssetsKeys.should.have.length(assetList.length);
+
         for (var i = 0; i < assetList.length; i++) {
           var key = location.origin + assetList[i];
+          if (typeof cachedAssets[key] === 'undefined') {
+            throw new Error('Cache doesn\'t have a cache item for: ' + key);
+          }
+
+          // TODO: Check the contents of the cache matches the data files?
+        }
+      })
+      .then(() => {
+        done();
+      })
+      .catch(error => {
+        done(error);
+      });
+    });
+
+    it('should not precache paths that do no exist', done => {
+      var testId = 'precache-non-existant-files';
+      var validAssetsList = [
+        '/test/data/files/text.txt',
+        '/test/data/files/image.png'
+      ];
+      testHelper.activateSW('/test/data/' + testId + '/sw.js')
+      .then(() => {
+        return testHelper.getAllCachedAssets(testId);
+      })
+      .then(cachedAssets => {
+        var cachedAssetsKeys = Object.keys(cachedAssets);
+        cachedAssetsKeys.should.have.length(validAssetsList.length);
+
+        for (var i = 0; i < validAssetsList.length; i++) {
+          var key = location.origin + validAssetsList[i];
+          if (typeof cachedAssets[key] === 'undefined') {
+            throw new Error('Cache doesn\'t have a cache item for: ' + key);
+          }
+
+          // TODO: Check the contents of the cache matches the data files?
+        }
+      })
+      .then(() => {
+        done();
+      })
+      .catch(error => {
+        done(error);
+      });
+    });
+
+    it('should precache all assets from each install step', done => {
+      var toolboxAssetList = [
+        '/test/data/files/text.txt',
+        '/test/data/files/image.png'
+      ];
+      testHelper.activateSW('/test/data/precache-custom-install/sw.js')
+      .then(() => {
+        return testHelper.getAllCachedAssets('precache-custom-install-toolbox');
+      })
+      .then(cachedAssets => {
+        var cachedAssetsKeys = Object.keys(cachedAssets);
+        cachedAssetsKeys.should.have.length(toolboxAssetList.length);
+
+        for (var i = 0; i < toolboxAssetList.length; i++) {
+          var key = location.origin + toolboxAssetList[i];
+          if (typeof cachedAssets[key] === 'undefined') {
+            throw new Error('Cache doesn\'t have a cache item for: ' + key);
+          }
+
+          // TODO: Check the contents of the cache matches the data files?
+        }
+      })
+      .then(() => {
+        return testHelper.getAllCachedAssets('precache-custom-install');
+      })
+      .then(cachedAssets => {
+        var expectedAssets = [
+          '/test/data/files/text-1.txt',
+          '/test/data/files/text-2.txt'
+        ];
+
+        var cachedAssetsKeys = Object.keys(cachedAssets);
+        cachedAssetsKeys.should.have.length(expectedAssets.length);
+
+        for (var i = 0; i < expectedAssets.length; i++) {
+          var key = location.origin + expectedAssets[i];
           if (typeof cachedAssets[key] === 'undefined') {
             throw new Error('Cache doesn\'t have a cache item for: ' + key);
           }
