@@ -44,28 +44,6 @@ function compareCachedAssets(assetList, cachedAssets) {
 }
 
 describe('Test precache method', () => {
-  beforeEach(function(done) {
-    Promise.all([
-      testHelper.unregisterAllRegistrations(),
-      testHelper.clearAllCaches()
-    ])
-    .then(() => done(), done);
-  });
-
-  after(function(done) {
-    Promise.all([
-      testHelper.unregisterAllRegistrations(),
-      testHelper.clearAllCaches()
-    ])
-    .then(() => {
-      var iframeList = document.querySelectorAll('.js-test-iframe');
-      for (var i = 0; i < iframeList.length; i++) {
-        iframeList[i].parentElement.removeChild(iframeList[i]);
-      }
-    })
-    .then(() => done(), done);
-  });
-
   it('should precache all desired assets in precache-valid', done => {
     var assetList = [
       '/test/data/files/text.txt',

@@ -23,19 +23,24 @@ const deleteSuccessChecker = success => {
   }
 };
 
-window.SWTestHelper = {
-  createNewIframe: function() {
-    return new Promise(resolve => {
-      var newIframe = document.createElement('iframe');
-      newIframe.classList.add('js-test-iframe');
-      newIframe.src = '/test/iframe/' + Math.random();
-      newIframe.addEventListener('load', () => {
-        resolve(newIframe);
-      });
-      document.body.appendChild(newIframe);
-    });
-  },
+var createNewIframe = function() {
+  return new Promise(resolve => {
+    var existingIframe = document.querySelector('.js-test-iframe');
+    if (existingIframe) {
+      throw new Error('You need to remove all iframes before each test.');
+    }
 
+    var newIframe = document.createElement('iframe');
+    newIframe.classList.add('js-test-iframe');
+    newIframe.src = '/test/iframe/' + Math.random();
+    newIframe.addEventListener('load', () => {
+      resolve(newIframe);
+    });
+    document.body.appendChild(newIframe);
+  });
+};
+
+window.SWTestHelper = {
   unregisterAllRegistrations: function() {
     return navigator.serviceWorker.getRegistrations()
       .then(registrations => {
@@ -73,13 +78,17 @@ window.SWTestHelper = {
 
   installSW: function(swFile) {
     return new Promise((resolve, reject) => {
-      var options = null;
-      var iframe = document.querySelector('.js-test-iframe');
-      if (iframe) {
-        options = {scope: iframe.contentWindow.location.pathname};
-      }
+      var iframe;
+      createNewIframe()
+      .then(newIframe => {
+        var options = null;
+        if (newIframe) {
+          options = {scope: iframe.contentWindow.location.pathname};
+          iframe = newIframe;
+        }
 
-      navigator.serviceWorker.register(swFile, options)
+        return navigator.serviceWorker.register(swFile, options);
+      })
       .then(registration => {
         if (registration.installing === null) {
           throw new Error(swFile + ' already installed.');
@@ -92,7 +101,7 @@ window.SWTestHelper = {
             return;
           }
 
-          resolve();
+          resolve(iframe);
         };
       })
       .catch(err => {
@@ -104,12 +113,16 @@ window.SWTestHelper = {
 
   activateSW: function(swFile) {
     return new Promise((resolve, reject) => {
-      var options = null;
-      var iframe = document.querySelector('.js-test-iframe');
-      if (iframe) {
-        options = {scope: iframe.contentWindow.location.pathname};
-      }
-      navigator.serviceWorker.register(swFile, options)
+      var iframe;
+      createNewIframe()
+      .then(newIframe => {
+        var options = null;
+        if (newIframe) {
+          options = {scope: newIframe.contentWindow.location.pathname};
+          iframe = newIframe;
+        }
+        return navigator.serviceWorker.register(swFile, options);
+      })
       .then(registration => {
         if (registration.installing === null) {
           throw new Error(swFile + ' already installed.');
@@ -122,7 +135,7 @@ window.SWTestHelper = {
             return;
           }
 
-          resolve();
+          resolve(iframe);
         };
       })
       .catch(err => {
@@ -174,5 +187,18 @@ window.SWTestHelper = {
         }
         return output;
       });
+  },
+
+  cleanState: function() {
+    return Promise.all([
+      this.unregisterAllRegistrations(),
+      this.clearAllCaches()
+    ])
+    .then(() => {
+      var iframeList = document.querySelectorAll('.js-test-iframe');
+      for (var i = 0; i < iframeList.length; i++) {
+        iframeList[i].parentElement.removeChild(iframeList[i]);
+      }
+    });
   }
 };

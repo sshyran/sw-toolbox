@@ -26,13 +26,7 @@ window.chai.should();
 var testHelper = window.SWTestHelper;
 
 function performTest(swUrl, fetchUrl, expectedString, done) {
-  testHelper.createNewIframe()
-  .then(iframe => {
-    return testHelper.activateSW(swUrl)
-      .then(() => {
-        return iframe;
-      });
-  })
+  testHelper.activateSW(swUrl)
   .then(iframe => {
     // Call the iframes fetch event so it goes through the service worker
     return iframe.contentWindow.fetch(fetchUrl);
@@ -48,34 +42,6 @@ function performTest(swUrl, fetchUrl, expectedString, done) {
 }
 
 describe('Test router.get method', () => {
-  beforeEach(function(done) {
-    Promise.all([
-      testHelper.unregisterAllRegistrations(),
-      testHelper.clearAllCaches()
-    ])
-    .then(() => {
-      var iframeList = document.querySelectorAll('.js-test-iframe');
-      for (var i = 0; i < iframeList.length; i++) {
-        iframeList[i].parentElement.removeChild(iframeList[i]);
-      }
-    })
-    .then(() => done(), done);
-  });
-
-  after(function(done) {
-    Promise.all([
-      testHelper.unregisterAllRegistrations(),
-      testHelper.clearAllCaches()
-    ])
-    .then(() => {
-      var iframeList = document.querySelectorAll('.js-test-iframe');
-      for (var i = 0; i < iframeList.length; i++) {
-        iframeList[i].parentElement.removeChild(iframeList[i]);
-      }
-    })
-    .then(() => done(), done);
-  });
-
   it('should return response for relative url /test/relative-url-test', done => {
     performTest(
       '/test/serviceworkers/router-get/relative.js',

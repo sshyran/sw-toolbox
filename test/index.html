@@ -61,9 +61,6 @@
         };
       }
 
-      mocha.checkLeaks();
-      mocha.globals(['SWTestHelper']);
-
       // This make browsers without a service worker pass by
       // bypassing the tests altogether.
       // This is desirable to allow travis to run tests in all browsers
@@ -72,6 +69,18 @@
         publishTestResults();
         return;
       }
+
+      // We unregister all service workers, clear all caches and remove
+      // All registered iframes
+      beforeEach(function(done) {
+        testHelper.cleanState()
+        .then(() => done(), done);
+      });
+
+      after(function(done) {
+        testHelper.cleanState()
+        .then(() => done(), done);
+      });
 
       var runResults = mocha.run();
 
