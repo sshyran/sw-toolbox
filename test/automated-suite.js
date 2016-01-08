@@ -58,7 +58,7 @@ describe('Test SW-Toolbox', () => {
     .then(testResults => {
       if (testResults.failed.length > 0) {
         var failedTests = testResults.failed;
-        var errorMsg = 'Issues in Firefox.\n\nFirefox had ' + testResults.failed.length + ' test failures.\n';
+        var errorMsg = 'Issues in ' + browserName + '.\n\n' + browserName + ' had ' + testResults.failed.length + ' test failures.\n';
         errorMsg += '------------------------------------------------\n';
         for (var i = 0; i < failedTests.length; i++) {
           var testResult = failedTests[i];
