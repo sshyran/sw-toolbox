@@ -34,6 +34,9 @@ gulp.task('test:manual', function() {
 });
 
 gulp.task('test:automated', ['test:manual'], function() {
+  // This task requires you to have chrome driver in your path
+  // You can do this with:
+  // npm install -g chromedriver
   return gulp.src('test/tests/automated-suite.js', {read: false})
     .pipe(mocha({
       timeout: 10000
