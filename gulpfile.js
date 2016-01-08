@@ -19,17 +19,19 @@ var browserify = require('browserify');
 var eslint = require('gulp-eslint');
 var ghPages = require('gulp-gh-pages');
 var gulp = require('gulp');
-var connect = require('gulp-connect');
 var source = require('vinyl-source-stream');
 var temp = require('temp').track();
 var mocha = require('gulp-mocha');
+var spawn = require('child_process').spawn;
 
 var buildSources = ['lib/**/*.js'];
 var lintSources = buildSources.concat(['gulpfile.js', 'recipes/**/*.js']);
 
+var testServer = null;
+
 gulp.task('test:manual', function() {
-  return connect.server({
-    port: 8888
+  testServer = spawn('node', ['test/server/index.js'], {
+    stdio: 'inherit'
   });
 });
 
@@ -42,10 +44,10 @@ gulp.task('test:automated', ['test:manual'], function() {
       timeout: 10000
     }))
     .once('error', () => {
-      connect.serverClose();
+      testServer.kill();
     })
     .once('end', () => {
-      connect.serverClose();
+      testServer.kill();
     });
 });
 

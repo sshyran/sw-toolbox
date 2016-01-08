@@ -53,12 +53,29 @@ describe('Test router.get method', () => {
     .then(() => done(), done);
   });
 
-  it('should return response of relative url', done => {
-    done('TODO');
+  it('should return response for relative url', done => {
+    var iframe;
+    testHelper.createNewIframe()
+    .then(newIframe => {
+      iframe = newIframe;
+      return testHelper.activateSW('/test/serviceworkers/router-get/relative.js');
+    })
+    .then(() => {
+      // Call the iframes fetch event so it goes through the service worker
+      return iframe.contentWindow.fetch('/test/relative-url-test');
+    })
+    .then(response => {
+      response.status.should.equal(200);
+      return response.text();
+    })
+    .then(responseText => {
+      responseText.should.equal('/test/relative-url-test');
+    })
+    .then(() => done(), done);
   });
 
-  it('should return response of absolute url', done => {
-    var absoluteUrl = 'https://developers.google.com/web/tools/swtoolbox/absolute/route/test/';
+  it('should return response for absolute url', done => {
+    var absoluteUrl = location.origin + '/test/absolute-url-test';
     var iframe;
     testHelper.createNewIframe()
     .then(newIframe => {
@@ -66,7 +83,6 @@ describe('Test router.get method', () => {
       return testHelper.activateSW('/test/serviceworkers/router-get/absolute.js');
     })
     .then(() => {
-      console.log(iframe.src);
       // Call the iframes fetch event so it goes through the service worker
       return iframe.contentWindow.fetch(absoluteUrl);
     })

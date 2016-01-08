@@ -32,7 +32,6 @@ self.addEventListener('install', function(event) {
   );
 });
 
-self.toolbox.options.debug = true;
 self.toolbox.options.cache = {
   name: 'precache-custom-install-toolbox'
 };

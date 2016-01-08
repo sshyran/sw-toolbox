@@ -72,8 +72,6 @@ describe('Test SW-Toolbox', () => {
     });
   };
 
-  console.log(webdriver.Capabilities.chrome());
-
   it('should pass all tests in Chrome', done => {
     performTests('chrome', {
       browserName: 'chrome'

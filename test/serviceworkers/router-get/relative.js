@@ -32,7 +32,7 @@ self.addEventListener('activate', function(event) {
 });
 
 self.toolbox.router.get(
-  location.origin + '/test/absolute-url-test',
+  '/test/relative-url-test',
   function() {
-    return new Response(location.origin + '/test/absolute-url-test');
+    return new Response('/test/relative-url-test');
   });
