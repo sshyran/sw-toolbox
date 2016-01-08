@@ -26,13 +26,14 @@ window.chai.should();
 var testHelper = window.SWTestHelper;
 
 function performTest(swUrl, fetchUrl, expectedString, done) {
-  var iframe;
   testHelper.createNewIframe()
-  .then(newIframe => {
-    iframe = newIframe;
-    return testHelper.activateSW(swUrl);
+  .then(iframe => {
+    return testHelper.activateSW(swUrl)
+      .then(() => {
+        return iframe;
+      });
   })
-  .then(() => {
+  .then(iframe => {
     // Call the iframes fetch event so it goes through the service worker
     return iframe.contentWindow.fetch(fetchUrl);
   })
