@@ -19,32 +19,32 @@
 
 /* eslint-disable max-len, no-lonely-if */
 /* eslint-env browser, mocha */
+/* global testHelper */
 
 'use strict';
 
-window.chai.should();
-var testHelper = window.SWTestHelper;
-
-function performTest(swUrl, fetchUrl, expectedString, done) {
-  testHelper.activateSW(swUrl)
-  .then(iframe => {
-    // Call the iframes fetch event so it goes through the service worker
-    return iframe.contentWindow.fetch(fetchUrl);
-  })
-  .then(response => {
-    response.status.should.equal(200);
-    return response.text();
-  })
-  .then(responseText => {
-    responseText.should.equal(expectedString);
-  })
-  .then(() => done(), done);
-}
-
 describe('Test router.get method', () => {
+  function performTest(swUrl, fetchUrl, expectedString, done) {
+    testHelper.activateSW(swUrl)
+    .then(iframe => {
+      // Call the iframes fetch event so it goes through the service worker
+      return iframe.contentWindow.fetch(fetchUrl);
+    })
+    .then(response => {
+      response.status.should.equal(200);
+      return response.text();
+    })
+    .then(responseText => {
+      responseText.should.equal(expectedString);
+    })
+    .then(() => done(), done);
+  }
+
+  var serviceWorkersFolder = '/test/browser-tests/router-get/serviceworkers';
+
   it('should return response for relative url /test/relative-url-test', done => {
     performTest(
-      '/test/serviceworkers/router-get/relative.js',
+      serviceWorkersFolder + '/relative.js',
       '/test/relative-url-test',
       '/test/relative-url-test',
       done
@@ -53,7 +53,7 @@ describe('Test router.get method', () => {
 
   it('should return response for relative url test/relative-url-test-2', done => {
     performTest(
-      '/test/serviceworkers/router-get/relative.js',
+      serviceWorkersFolder + '/relative.js',
       '/test/serviceworkers/router-get/' + 'test/relative-url-test-2',
       'test/relative-url-test-2',
       result => {
@@ -69,7 +69,7 @@ describe('Test router.get method', () => {
 
   it('should return the variable from a pattern', done => {
     performTest(
-      '/test/serviceworkers/router-get/variable-match.js',
+      serviceWorkersFolder + '/variable-match.js',
       '/test/match/echo-this/pattern',
       'echo-this',
       done
@@ -78,7 +78,7 @@ describe('Test router.get method', () => {
 
   it('should return response for a full URL', done => {
     performTest(
-      '/test/serviceworkers/router-get/full-url.js',
+      serviceWorkersFolder + '/full-url.js',
       '/test/absolute-url-test',
       location.origin + '/test/absolute-url-test',
       done

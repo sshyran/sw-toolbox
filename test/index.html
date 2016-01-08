@@ -30,15 +30,14 @@
   <script src="/node_modules/chai/chai.js"></script>
   <script src="/node_modules/mocha/mocha.js"></script>
 
-  <script src="/test/inbrowser-tests/libs/helper-functions.js"></script>
+  <script src="/test/browser-tests/libs/helper-functions.js"></script>
 
   <script>mocha.setup({
     ui: 'bdd'
   })</script>
 
-  <script src="/test/inbrowser-tests/precache.js"></script>
-  <script src="/test/inbrowser-tests/router-get.js"></script>
-  <script src="/test/inbrowser-tests/router-default.js"></script>
+  <script src="/test/browser-tests/precache/precache.js"></script>
+  <script src="/test/browser-tests/router-get/router-get.js"></script>
 
   <script>
     (function() {
@@ -69,6 +68,8 @@
         publishTestResults();
         return;
       }
+
+      window.chai.should();
 
       // We unregister all service workers, clear all caches and remove
       // All registered iframes

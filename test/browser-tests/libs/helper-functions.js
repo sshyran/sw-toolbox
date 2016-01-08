@@ -40,7 +40,7 @@ var createNewIframe = function() {
   });
 };
 
-window.SWTestHelper = {
+window.testHelper = {
   unregisterAllRegistrations: function() {
     return navigator.serviceWorker.getRegistrations()
       .then(registrations => {

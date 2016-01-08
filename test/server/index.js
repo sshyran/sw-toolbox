@@ -22,14 +22,14 @@ var express = require('express');
 var app = express();
 
 // Set up static assets
-app.use('/test/serviceworkers/',
-  express.static(path.join(__dirname, '../serviceworkers/'), {
+app.use('/test/browser-tests/',
+  express.static(path.join(__dirname, '../browser-tests/'), {
     setHeaders: function(res) {
       res.setHeader('Service-Worker-Allowed', '/');
     }
   }));
-app.use('/',
-  express.static(path.join(__dirname, '../../')));
+
+app.use('/', express.static(path.join(__dirname, '../../')));
 
 app.get('/', function(req, res) {
   res.redirect('/test/');

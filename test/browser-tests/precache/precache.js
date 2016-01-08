@@ -19,37 +19,37 @@
 
 /* eslint-disable max-len, no-lonely-if */
 /* eslint-env browser, mocha */
+/* global testHelper */
 
 'use strict';
 
-window.chai.should();
-var testHelper = window.SWTestHelper;
+describe('Test precache method', () => {
+  function compareCachedAssets(assetList, cachedAssets) {
+    return new Promise((resolve, reject) => {
+      var cachedAssetsKeys = Object.keys(cachedAssets);
+      cachedAssetsKeys.should.have.length(assetList.length);
 
-function compareCachedAssets(assetList, cachedAssets) {
-  return new Promise((resolve, reject) => {
-    var cachedAssetsKeys = Object.keys(cachedAssets);
-    cachedAssetsKeys.should.have.length(assetList.length);
+      for (var i = 0; i < assetList.length; i++) {
+        var key = location.origin + assetList[i];
+        if (typeof cachedAssets[key] === 'undefined') {
+          reject(new Error('Cache doesn\'t have a cache item for: ' + key));
+        }
 
-    for (var i = 0; i < assetList.length; i++) {
-      var key = location.origin + assetList[i];
-      if (typeof cachedAssets[key] === 'undefined') {
-        reject(new Error('Cache doesn\'t have a cache item for: ' + key));
+        // TODO: Check the contents of the cache matches the data files?
       }
 
-      // TODO: Check the contents of the cache matches the data files?
-    }
+      resolve();
+    });
+  }
 
-    resolve();
-  });
-}
+  var serviceWorkersFolder = '/test/browser-tests/precache/serviceworkers';
 
-describe('Test precache method', () => {
   it('should precache all desired assets in precache-valid', done => {
     var assetList = [
       '/test/data/files/text.txt',
       '/test/data/files/image.png'
     ];
-    testHelper.activateSW('/test/serviceworkers/precache/valid.js')
+    testHelper.activateSW(serviceWorkersFolder + '/valid.js')
     .then(() => {
       return testHelper.getAllCachedAssets('precache-valid');
     })
@@ -65,7 +65,7 @@ describe('Test precache method', () => {
       '/test/data/files/text.txt',
       '/test/data/files/image.png'
     ];
-    testHelper.activateSW('/test/serviceworkers/precache/non-existant-files.js')
+    testHelper.activateSW(serviceWorkersFolder + '/non-existant-files.js')
     .then(() => {
       return testHelper.getAllCachedAssets(testId);
     })
@@ -84,7 +84,7 @@ describe('Test precache method', () => {
       '/test/data/files/text-1.txt',
       '/test/data/files/text-2.txt'
     ];
-    testHelper.activateSW('/test/serviceworkers/precache/custom-install.js')
+    testHelper.activateSW(serviceWorkersFolder + '/custom-install.js')
     .then(() => {
       return testHelper.getAllCachedAssets('precache-custom-install-toolbox');
     })
