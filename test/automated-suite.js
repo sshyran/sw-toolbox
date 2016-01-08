@@ -31,17 +31,17 @@ describe('Test SW-Toolbox', () => {
   var driver;
   afterEach(function(done) {
     driver.quit()
-    .then(() => done(), done);
+    .then(() => done());
   });
 
   var performTests = function(browserName) {
-    driver = new webdriver
-      .Builder()
-      .withCapabilities({
-        browserName: browserName
-      })
-      .build();
     return new Promise(resolve => {
+      driver = new webdriver
+        .Builder()
+        .withCapabilities({
+          browserName: browserName
+        })
+        .build();
       driver.get('http://localhost:8888/test/')
       .then(function() {
         return driver.wait(function() {
