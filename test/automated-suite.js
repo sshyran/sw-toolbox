@@ -34,13 +34,11 @@ describe('Test SW-Toolbox', () => {
     .then(() => done());
   });
 
-  var performTests = function(browserName) {
+  var performTests = function(browserName, capabilities) {
     return new Promise(resolve => {
       driver = new webdriver
         .Builder()
-        .withCapabilities({
-          browserName: browserName
-        })
+        .withCapabilities(capabilities)
         .build();
       driver.get('http://localhost:8888/test/')
       .then(function() {
@@ -74,8 +72,12 @@ describe('Test SW-Toolbox', () => {
     });
   };
 
+  console.log(webdriver.Capabilities.chrome());
+
   it('should pass all tests in Chrome', done => {
-    performTests('chrome')
+    performTests('chrome', {
+      browserName: 'chrome'
+    })
     .then(() => {
       done();
     })
@@ -85,7 +87,9 @@ describe('Test SW-Toolbox', () => {
   });
 
   it('should pass all tests in Firefox', done => {
-    performTests('firefox')
+    performTests('firefox', {
+      browserName: 'firefox'
+    })
     .then(() => {
       done();
     })

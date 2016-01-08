@@ -28,7 +28,7 @@ window.SWTestHelper = {
     return new Promise(resolve => {
       var newIframe = document.createElement('iframe');
       newIframe.classList.add('js-test-iframe');
-      newIframe.src = '/test-iframe/' + Math.random();
+      newIframe.src = '/test/iframe/' + Math.random();
       newIframe.addEventListener('load', () => {
         resolve(newIframe);
       });

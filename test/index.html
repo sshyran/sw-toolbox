@@ -15,6 +15,14 @@
   <meta charset="utf-8">
   <title>SW Toolbox Tests</title>
   <link href="/node_modules/mocha/mocha.css" rel="stylesheet" />
+
+  <!-- Hide the iframes used in the testing -->
+  <style>
+    iframe {
+      width: 0;
+      height: 0;
+    }
+  </style>
 </head>
 <body>
   <div id="mocha"></div>
@@ -22,43 +30,58 @@
   <script src="/node_modules/chai/chai.js"></script>
   <script src="/node_modules/mocha/mocha.js"></script>
 
-  <script src="/test/libs/helper-functions.js"></script>
+  <script src="/test/inbrowser-tests/libs/helper-functions.js"></script>
 
   <script>mocha.setup({
     ui: 'bdd'
   })</script>
-  <script src="/test/tests/precache.js"></script>
+
+  <script src="/test/inbrowser-tests/precache.js"></script>
+  <script src="/test/inbrowser-tests/router-get.js"></script>
+  <script src="/test/inbrowser-tests/router-default.js"></script>
+
   <script>
-    var passedTests = [];
-    var failedTests = [];
+    (function() {
+      var passedTests = [];
+      var failedTests = [];
 
-    function getFriendlyTestResult(testResult) {
-      return {
-        title: testResult.title,
-        state: testResult.state
+      function getFriendlyTestResult(testResult) {
+        return {
+          title: testResult.title,
+          state: testResult.state
+        };
       };
-    };
 
-    function publishTestResults() {
-      window.swtoolbox = {
-        testResults: {
-          passed: passedTests,
-          failed: failedTests
-        }
-      };
-    }
+      function publishTestResults() {
+        window.swtoolbox = {
+          testResults: {
+            passed: passedTests,
+            failed: failedTests
+          }
+        };
+      }
 
-    mocha.checkLeaks();
-    mocha.globals(['SWTestHelper']);
+      mocha.checkLeaks();
+      mocha.globals(['SWTestHelper']);
 
+      // This make browsers without a service worker pass by
+      // bypassing the tests altogether.
+      // This is desirable to allow travis to run tests in all browsers
+      // regardless of support or not and track over time.
+      if (!('serviceWorker' in navigator)) {
+        publishTestResults();
+        return;
+      }
 
-    var runResults = mocha.run();
+      var runResults = mocha.run();
 
-    // If there are no tests we should defined swtoolbox + testResults
-    // so the automated test suite will know the test has ended
-    if (runResults.total === 0) {
-      publishTestResults();
-    } else {
+      // If there are no tests we should defined swtoolbox + testResults
+      // so the automated test suite will know the test has ended
+      if (runResults.total === 0) {
+        publishTestResults();
+        return;
+      }
+
       runResults.on('pass', function(test) {
         passedTests.push(getFriendlyTestResult(test));
       })
@@ -73,7 +96,7 @@
           }
         };
       });
-    }
+    })();
   </script>
 </body>
 </html>
