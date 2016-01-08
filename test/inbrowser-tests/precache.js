@@ -14,13 +14,13 @@
   limitations under the License.
 */
 
-'use strict';
-
 // This is a test and we want descriptions to be useful, if this
 // breaks the max-length, it's ok.
 
 /* eslint-disable max-len, no-lonely-if */
 /* eslint-env browser, mocha */
+
+'use strict';
 
 window.chai.should();
 var testHelper = window.SWTestHelper;

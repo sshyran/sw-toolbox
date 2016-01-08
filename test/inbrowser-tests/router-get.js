@@ -14,21 +14,37 @@
   limitations under the License.
 */
 
-'use strict';
-
 // This is a test and we want descriptions to be useful, if this
 // breaks the max-length, it's ok.
 
 /* eslint-disable max-len, no-lonely-if */
 /* eslint-env browser, mocha */
 
+'use strict';
+
 window.chai.should();
 var testHelper = window.SWTestHelper;
 
-// toolbox.router.get('relative/route', respondOK);
-// toolbox.router.get('matching/:string/patterns', function(request, values) {
-//   return new Response(values.string);
-// });
+function performTest(swUrl, fetchUrl, expectedString, done) {
+  var iframe;
+  testHelper.createNewIframe()
+  .then(newIframe => {
+    iframe = newIframe;
+    return testHelper.activateSW(swUrl);
+  })
+  .then(() => {
+    // Call the iframes fetch event so it goes through the service worker
+    return iframe.contentWindow.fetch(fetchUrl);
+  })
+  .then(response => {
+    response.status.should.equal(200);
+    return response.text();
+  })
+  .then(responseText => {
+    responseText.should.equal(expectedString);
+  })
+  .then(() => done(), done);
+}
 
 describe('Test router.get method', () => {
   beforeEach(function(done) {
@@ -36,6 +52,12 @@ describe('Test router.get method', () => {
       testHelper.unregisterAllRegistrations(),
       testHelper.clearAllCaches()
     ])
+    .then(() => {
+      var iframeList = document.querySelectorAll('.js-test-iframe');
+      for (var i = 0; i < iframeList.length; i++) {
+        iframeList[i].parentElement.removeChild(iframeList[i]);
+      }
+    })
     .then(() => done(), done);
   });
 
@@ -53,46 +75,46 @@ describe('Test router.get method', () => {
     .then(() => done(), done);
   });
 
-  it('should return response for relative url', done => {
-    var iframe;
-    testHelper.createNewIframe()
-    .then(newIframe => {
-      iframe = newIframe;
-      return testHelper.activateSW('/test/serviceworkers/router-get/relative.js');
-    })
-    .then(() => {
-      // Call the iframes fetch event so it goes through the service worker
-      return iframe.contentWindow.fetch('/test/relative-url-test');
-    })
-    .then(response => {
-      response.status.should.equal(200);
-      return response.text();
-    })
-    .then(responseText => {
-      responseText.should.equal('/test/relative-url-test');
-    })
-    .then(() => done(), done);
+  it('should return response for relative url /test/relative-url-test', done => {
+    performTest(
+      '/test/serviceworkers/router-get/relative.js',
+      '/test/relative-url-test',
+      '/test/relative-url-test',
+      done
+    );
   });
 
-  it('should return response for absolute url', done => {
-    var absoluteUrl = location.origin + '/test/absolute-url-test';
-    var iframe;
-    testHelper.createNewIframe()
-    .then(newIframe => {
-      iframe = newIframe;
-      return testHelper.activateSW('/test/serviceworkers/router-get/absolute.js');
-    })
-    .then(() => {
-      // Call the iframes fetch event so it goes through the service worker
-      return iframe.contentWindow.fetch(absoluteUrl);
-    })
-    .then(response => {
-      response.status.should.equal(200);
-      return response.text();
-    })
-    .then(responseText => {
-      responseText.should.equal(absoluteUrl);
-    })
-    .then(() => done(), done);
+  it('should return response for relative url test/relative-url-test-2', done => {
+    performTest(
+      '/test/serviceworkers/router-get/relative.js',
+      '/test/serviceworkers/router-get/' + 'test/relative-url-test-2',
+      'test/relative-url-test-2',
+      result => {
+        if (result) {
+          done(result);
+        } else {
+          done('This is unpredictable behaviour. ' +
+            'We probably shouldn\'t support or encourage it.');
+        }
+      }
+    );
+  });
+
+  it('should return the variable from a pattern', done => {
+    performTest(
+      '/test/serviceworkers/router-get/variable-match.js',
+      '/test/match/echo-this/pattern',
+      'echo-this',
+      done
+    );
+  });
+
+  it('should return response for a full URL', done => {
+    performTest(
+      '/test/serviceworkers/router-get/full-url.js',
+      '/test/absolute-url-test',
+      location.origin + '/test/absolute-url-test',
+      done
+    );
   });
 });

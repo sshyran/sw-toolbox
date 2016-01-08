@@ -32,15 +32,7 @@ self.addEventListener('activate', function(event) {
 });
 
 self.toolbox.router.get(
-  '/test/relative-url-test',
-  function() {
-    return new Response('/test/relative-url-test');
-  });
-
-console.log('sw location: ', self.location);
-
-self.toolbox.router.get(
-  'test/relative-url-test-2',
-  function() {
-    return new Response('test/relative-url-test-2');
+  '/test/match/:variable/pattern',
+  function(request, values) {
+    return new Response(values.variable);
   });

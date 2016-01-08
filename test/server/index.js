@@ -35,7 +35,7 @@ app.get('/', function(req, res) {
   res.redirect('/test/');
 });
 
-app.get('/test/iframe*', function(req, res) {
+app.get('/test/iframe/:timestamp', function(req, res) {
   res.sendFile(path.join(__dirname, '../data/test-iframe.html'));
 });
 
