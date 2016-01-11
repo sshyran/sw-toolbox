@@ -84,4 +84,87 @@ describe('Test router.get method', () => {
       done
     );
   });
+
+  it('should return a response from the first defined match', done => {
+    var iframe;
+    testHelper.activateSW(serviceWorkersFolder + '/definition-order.js')
+    .then(newIframe => {
+      iframe = newIframe;
+      // Call the iframes fetch event so it goes through the service worker
+      return iframe.contentWindow.fetch('/multiple/match/something.html');
+    })
+    .then(response => {
+      response.status.should.equal(200);
+      return response.text();
+    })
+    .then(responseText => {
+      responseText.should.equal('multiple-match-1');
+    })
+    .then(() => {
+      // Call the iframes fetch event so it goes through the service worker
+      return iframe.contentWindow.fetch('/multiple/match/something');
+    })
+    .then(response => {
+      response.status.should.equal(200);
+      return response.text();
+    })
+    .then(responseText => {
+      responseText.should.equal('multiple-match-2');
+    })
+    .then(() => done(), done);
+  });
+
+  it.skip('should return response for different origin', done => {
+    performTest(
+      serviceWorkersFolder + '/origin-matching.js',
+      'developers.google.com/web-origin',
+      '/web-with-origin-option',
+      done
+    );
+  });
+
+  it('should return response for different origin with HTTP', done => {
+    performTest(
+      serviceWorkersFolder + '/origin-matching.js',
+      'http://developers.google.com/web-origin',
+      '/web-with-origin-option',
+      done
+    );
+  });
+
+  it('should return response for different origin with HTTPS', done => {
+    performTest(
+      serviceWorkersFolder + '/origin-matching.js',
+      'https://developers.google.com/web-origin',
+      '/web-with-origin-option',
+      done
+    );
+  });
+
+  it('should return response for different origin using regex', done => {
+    performTest(
+      serviceWorkersFolder + '/origin-matching.js',
+      'developers.google.com/web-regex',
+      '/web-with-regex',
+      done
+    );
+  });
+
+  it('should return response for different origin with HTTP using regex', done => {
+    performTest(
+      serviceWorkersFolder + '/origin-matching.js',
+      'http://developers.google.com/web-regex',
+      '/web-with-regex',
+      done
+    );
+  });
+
+  it('should return response for different origin with HTTPS using regex', done => {
+    performTest(
+      serviceWorkersFolder + '/origin-matching.js',
+      'https://developers.google.com/web-regex',
+      '/web-with-regex',
+      done
+    );
+  });
 });
