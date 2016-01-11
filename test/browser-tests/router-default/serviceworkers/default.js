@@ -31,14 +31,6 @@ self.addEventListener('activate', function(event) {
   event.waitUntil(self.clients.claim());
 });
 
-self.toolbox.router.get(
-  '/test/relative-url-test',
-  function() {
-    return new Response('/test/relative-url-test');
-  });
-
-self.toolbox.router.get(
-  'test/relative-url-test-2',
-  function() {
-    return new Response('test/relative-url-test-2');
-  });
+self.toolbox.router.default = function() {
+  return new Response('default-response');
+};

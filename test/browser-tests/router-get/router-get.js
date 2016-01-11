@@ -42,7 +42,7 @@ describe('Test router.get method', () => {
 
   var serviceWorkersFolder = '/test/browser-tests/router-get/serviceworkers';
 
-  it('should return response for relative url /test/relative-url-test', done => {
+  it('should return response for absolute url /test/relative-url-test', done => {
     performTest(
       serviceWorkersFolder + '/relative.js',
       '/test/relative-url-test',
@@ -51,10 +51,10 @@ describe('Test router.get method', () => {
     );
   });
 
-  it('should return response for relative url test/relative-url-test-2', done => {
+  it.skip('should return response for relative url test/relative-url-test-2', done => {
     performTest(
       serviceWorkersFolder + '/relative.js',
-      '/test/serviceworkers/router-get/' + 'test/relative-url-test-2',
+      '/test/serviceworkers/router-get/test/relative-url-test-2',
       'test/relative-url-test-2',
       result => {
         if (result) {
@@ -76,7 +76,7 @@ describe('Test router.get method', () => {
     );
   });
 
-  it('should return response for a full URL', done => {
+  it.skip('should return response for a full URL', done => {
     performTest(
       serviceWorkersFolder + '/full-url.js',
       '/test/absolute-url-test',

@@ -1,7 +1,7 @@
 'use strict';
 
 /* Setup */
-importScripts('../sw-toolbox.js');
+/** importScripts('../sw-toolbox.js');
 
 self.addEventListener('install', function(event) {
   self.skipWaiting();
@@ -11,10 +11,10 @@ self.addEventListener('activate', function(event) {
   event.waitUntil(self.clients.claim());
 });
 
-toolbox.options.debug = true;
+toolbox.options.debug = true;**/
 
 /* Helpers */
-var respondString = function(string) {
+/** var respondString = function(string) {
   return function() {
     return new Response(string);
   };
@@ -23,7 +23,7 @@ var respondString = function(string) {
 var respondOK = respondString('OK');
 var respondError = function(reason) {
   return new Response(`Error: ${reason}`, {status: 500});
-};
+};**/
 
 var rewrite = function(find, replace) {
   return function(request, values, options) {
@@ -39,19 +39,19 @@ var rewrite = function(find, replace) {
 /*
 This section is actually just ensuring that the test infrastructure is fine
 */
-toolbox.router.get('', rewrite(/\/$/, '/index.html'));
-toolbox.router.get('index.html', toolbox.fastest);
-toolbox.router.get('tests.js', toolbox.networkFirst);
-toolbox.router.get('/(.*)/qunit/(.*)', toolbox.fastest);
-toolbox.precache(['index.html', 'test.js', '../node_modules/qunitjs/qunit/qunit.css', '../node_modules/qunitjs/qunit/qunit.js']);
+// toolbox.router.get('', rewrite(/\/$/, '/index.html'));
+// toolbox.router.get('index.html', toolbox.fastest);
+// toolbox.router.get('tests.js', toolbox.networkFirst);
+// toolbox.router.get('/(.*)/qunit/(.*)', toolbox.fastest);
+// toolbox.precache(['index.html', 'test.js', '../node_modules/qunitjs/qunit/qunit.css', '../node_modules/qunitjs/qunit/qunit.js']);
 
 /* Routes needed for tests */
-toolbox.router.default = respondString('Default');
-toolbox.router.get(new URL('absolute/route', self.location).pathname, respondOK);
-toolbox.router.get('relative/route', respondOK);
-toolbox.router.get('matching/:string/patterns', function(request, values) {
-  return new Response(values.string);
-});
+//toolbox.router.default = respondString('Default');
+// toolbox.router.get(new URL('absolute/route', self.location).pathname, respondOK);
+// toolbox.router.get('relative/route', respondOK);
+//toolbox.router.get('matching/:string/patterns', function(request, values) {
+//  return new Response(values.string);
+//});
 
 toolbox.router.any('matches/any/method', respondOK);
 toolbox.router.head('matches/only/head', respondOK);

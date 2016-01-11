@@ -59,7 +59,7 @@ describe('Test precache method', () => {
     .then(() => done(), done);
   });
 
-  it('should not precache paths that do no exist', done => {
+  it.skip('should not precache paths that do no exist', done => {
     var testId = 'precache-non-existant-files';
     var validAssetsList = [
       '/test/data/files/text.txt',
