@@ -36,24 +36,8 @@ var rewrite = function(find, replace) {
   }
 };
 
-/*
-This section is actually just ensuring that the test infrastructure is fine
-*/
-// toolbox.router.get('', rewrite(/\/$/, '/index.html'));
-// toolbox.router.get('index.html', toolbox.fastest);
-// toolbox.router.get('tests.js', toolbox.networkFirst);
-// toolbox.router.get('/(.*)/qunit/(.*)', toolbox.fastest);
-// toolbox.precache(['index.html', 'test.js', '../node_modules/qunitjs/qunit/qunit.css', '../node_modules/qunitjs/qunit/qunit.js']);
 
-/* Routes needed for tests */
-//toolbox.router.default = respondString('Default');
-// toolbox.router.get(new URL('absolute/route', self.location).pathname, respondOK);
-// toolbox.router.get('relative/route', respondOK);
-//toolbox.router.get('matching/:string/patterns', function(request, values) {
-//  return new Response(values.string);
-//});
-
-toolbox.router.any('matches/any/method', respondOK);
+// toolbox.router.any('matches/any/method', respondOK);
 toolbox.router.head('matches/only/head', respondOK);
 
 toolbox.router.get('multiple/match/:foo.html', respondString('1'));
@@ -102,13 +86,3 @@ toolbox.router.get('fixtures/max-cache-age-entries/:foo', toolbox.networkFirst, 
 });
 
 toolbox.router.get('fixtures/:foo', toolbox.cacheOnly);
-// Single item
-toolbox.precache('fixtures/a');
-// Array of items
-toolbox.precache(['fixtures/b', 'fixtures/c']);
-// Array of Promises
-toolbox.precache([Promise.resolve('fixtures/d'), Promise.resolve('fixtures/e')]);
-// Array of Arrays
-toolbox.precache(['fixtures/f', ['fixtures/g', 'fixtures/h'], ['fixtures/i', 'fixtures/j']]);
-// Array of Promises for Arrays
-toolbox.precache([Promise.resolve(['fixtures/k', 'fixtures/l']), Promise.resolve(['fixtures/m', 'fixtures/n'])]);

@@ -49,7 +49,80 @@ describe('Test precache method', () => {
       '/test/data/files/text.txt',
       '/test/data/files/image.png'
     ];
-    testHelper.activateSW(serviceWorkersFolder + '/valid.js')
+    testHelper.activateSW(serviceWorkersFolder + '/simple.js')
+    .then(() => {
+      return testHelper.getAllCachedAssets('precache-valid');
+    })
+    .then(cachedAssets => {
+      return compareCachedAssets(assetList, cachedAssets);
+    })
+    .then(() => done(), done);
+  });
+
+  it('should precache a single item in precache-valid', done => {
+    var assetList = [
+      '/test/data/files/text.txt'
+    ];
+    testHelper.activateSW(serviceWorkersFolder + '/single-item.js')
+    .then(() => {
+      return testHelper.getAllCachedAssets('precache-valid');
+    })
+    .then(cachedAssets => {
+      return compareCachedAssets(assetList, cachedAssets);
+    })
+    .then(() => done(), done);
+  });
+
+  it('should precache all desired assets from promises in precache-valid', done => {
+    var assetList = [
+      '/test/data/files/text.txt',
+      '/test/data/files/image.png'
+    ];
+    testHelper.activateSW(serviceWorkersFolder + '/promises.js')
+    .then(() => {
+      return testHelper.getAllCachedAssets('precache-valid');
+    })
+    .then(cachedAssets => {
+      return compareCachedAssets(assetList, cachedAssets);
+    })
+    .then(() => done(), done);
+  });
+
+  it.skip('should precache all desired assets from arrays of arrays in precache-valid', done => {
+    var assetList = [
+      '/test/data/files/text.txt',
+      '/test/data/files/text-1.txt',
+      '/test/data/files/text-2.txt',
+      '/test/data/files/text-3.txt',
+      '/test/data/files/text-4.txt',
+      '/test/data/files/text-5.txt',
+      '/test/data/files/text-6.txt',
+      '/test/data/files/text-7.txt',
+      '/test/data/files/text-8.txt'
+    ];
+    testHelper.activateSW(serviceWorkersFolder + '/arrays.js')
+    .then(() => {
+      return testHelper.getAllCachedAssets('precache-valid');
+    })
+    .then(cachedAssets => {
+      return compareCachedAssets(assetList, cachedAssets);
+    })
+    .then(() => done(), done);
+  });
+
+  it.skip('should precache all desired assets from arrays of arrays of promisesin precache-valid', done => {
+    var assetList = [
+      '/test/data/files/text.txt',
+      '/test/data/files/text-1.txt',
+      '/test/data/files/text-2.txt',
+      '/test/data/files/text-3.txt',
+      '/test/data/files/text-4.txt',
+      '/test/data/files/text-5.txt',
+      '/test/data/files/text-6.txt',
+      '/test/data/files/text-7.txt',
+      '/test/data/files/text-8.txt'
+    ];
+    testHelper.activateSW(serviceWorkersFolder + '/promise-arrays.js')
     .then(() => {
       return testHelper.getAllCachedAssets('precache-valid');
     })
