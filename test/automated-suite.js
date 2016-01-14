@@ -21,6 +21,7 @@
 
 var webdriver = require('selenium-webdriver');
 var chrome = require('selenium-webdriver/chrome');
+var firefox = require('selenium-webdriver/firefox');
 require('chai').should();
 
 // var testHelper = require('./libs/helper-functions');
@@ -80,6 +81,7 @@ describe('Test SW-Toolbox', () => {
   };
 
   it('should pass all tests in Chrome Stable', done => {
+    // Chrome Options Doc: http://selenium.googlecode.com/git/docs/api/javascript/module_selenium-webdriver_chrome_class_Options.html
     var options = new chrome.Options();
     options.setChromeBinaryPath('/usr/bin/google-chrome-stable');
 
@@ -123,7 +125,27 @@ describe('Test SW-Toolbox', () => {
       .forBrowser('firefox')
       .build();
 
-    performTests('firefox', driver)
+    performTests('Firefox Stable', driver)
+    .then(() => {
+      done();
+    })
+    .catch(err => {
+      done(err);
+    });
+  });
+
+  it('should pass all tests in Firefox Beta', done => {
+    // Firefox Options Docs:
+    var options = new firefox.Options();
+    options.setBinary('./firefox/firefox');
+
+    driver = new webdriver
+      .Builder()
+      .forBrowser('firefox')
+      .setFirefoxOptions(options)
+      .build();
+
+    performTests('Firefox Beta', driver)
     .then(() => {
       done();
     })
