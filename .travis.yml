@@ -19,6 +19,8 @@ addons:
       - google-chrome-beta
 before_install:
   - npm install -g chromedriver
+  - wget 'https://download.mozilla.org/?product=firefox-beta-latest&lang=en-US&os=linux64' -O firefox-beta.zip && unzip firefox-beta.zip
+  - ls
 # Read more here: https://docs.travis-ci.com/user/gui-and-headless-browsers/#Using-xvfb-to-Run-Tests-That-Require-a-GUI
 before_script:
   - "export DISPLAY=:99.0"
