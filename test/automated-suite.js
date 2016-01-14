@@ -20,6 +20,7 @@
 // breaks the max-length, it's ok.
 
 var webdriver = require('selenium-webdriver');
+var chrome = require('selenium-webdriver/chrome');
 require('chai').should();
 
 // var testHelper = require('./libs/helper-functions');
@@ -30,17 +31,23 @@ require('chai').should();
 describe('Test SW-Toolbox', () => {
   var driver;
   afterEach(function(done) {
+    if (!driver) {
+      return done();
+    }
+
     driver.quit()
     .then(() => done());
   });
 
-  var performTests = function(browserName, capabilities) {
+  var performTests = function(browserName, driver) {
     return new Promise(resolve => {
-      driver = new webdriver
-        .Builder()
-        .withCapabilities(capabilities)
-        .build();
       driver.get('http://localhost:8888/test/')
+      .then(function() {
+        return driver.executeScript('return window.navigator.userAgent;');
+      })
+      .then(function(userAgent) {
+        console.log('Browser User Agent: ' + userAgent);
+      })
       .then(function() {
         return driver.wait(function() {
           return driver.executeScript('return ((typeof window.swtoolbox !== \'undefined\') && window.swtoolbox.testResults !== \'undefined\');');
@@ -72,10 +79,36 @@ describe('Test SW-Toolbox', () => {
     });
   };
 
-  it('should pass all tests in Chrome', done => {
-    performTests('chrome', {
-      browserName: 'chrome'
+  it('should pass all tests in Chrome Stable', done => {
+    var options = new chrome.Options();
+    options.setChromeBinaryPath('/usr/bin/google-chrome-stable');
+
+    driver = new webdriver
+      .Builder()
+      .forBrowser('chrome')
+      .setChromeOptions(options)
+      .build();
+
+    performTests('chrome-stable', driver)
+    .then(() => {
+      done();
     })
+    .catch(err => {
+      done(err);
+    });
+  });
+
+  it('should pass all tests in Chrome Beta', done => {
+    var options = new chrome.Options();
+    options.setChromeBinaryPath('/usr/bin/google-chrome-beta');
+
+    driver = new webdriver
+      .Builder()
+      .forBrowser('chrome')
+      .setChromeOptions(options)
+      .build();
+
+    performTests('chrome-beta', driver)
     .then(() => {
       done();
     })
@@ -85,9 +118,12 @@ describe('Test SW-Toolbox', () => {
   });
 
   it('should pass all tests in Firefox', done => {
-    performTests('firefox', {
-      browserName: 'firefox'
-    })
+    driver = new webdriver
+      .Builder()
+      .forBrowser('firefox')
+      .build();
+
+    performTests('firefox', driver)
     .then(() => {
       done();
     })
