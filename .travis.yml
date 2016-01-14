@@ -10,7 +10,6 @@ node_js:
   - 'stable'
 addons:
   firefox: latest
-  firefox: latest-beta
   apt:
     sources:
       - google-chrome
@@ -19,7 +18,7 @@ addons:
       - google-chrome-beta
 before_install:
   - npm install -g chromedriver
-  - wget 'https://download.mozilla.org/?product=firefox-beta-latest&lang=en-US&os=linux64' -O firefox-beta.zip && unzip firefox-beta.zip
+  - wget 'https://download.mozilla.org/?product=firefox-beta-latest&lang=en-US&os=linux64' -O firefox-beta.tar.bz2 && tar xvjf firefox-beta.tar.bz2
   - ls
 # Read more here: https://docs.travis-ci.com/user/gui-and-headless-browsers/#Using-xvfb-to-Run-Tests-That-Require-a-GUI
 before_script:
