@@ -22,6 +22,7 @@
 var webdriver = require('selenium-webdriver');
 var chrome = require('selenium-webdriver/chrome');
 var firefox = require('selenium-webdriver/firefox');
+var fs = require('fs');
 require('chai').should();
 
 // var testHelper = require('./libs/helper-functions');
@@ -30,14 +31,17 @@ require('chai').should();
 /* eslint-env node,mocha */
 
 describe('Test SW-Toolbox', () => {
-  var driver;
+  var driver = null;
   afterEach(function(done) {
-    if (!driver) {
+    if (driver === null) {
       return done();
     }
 
     driver.quit()
-    .then(() => done());
+    .then(() => {
+      driver = null;
+      done();
+    });
   });
 
   var performTests = function(browserName, driver) {
@@ -111,6 +115,9 @@ describe('Test SW-Toolbox', () => {
       .build();
 
     performTests('chrome-beta', driver)
+    .then(response => {
+      console.log(response);
+    })
     .then(() => {
       done();
     })
@@ -134,23 +141,31 @@ describe('Test SW-Toolbox', () => {
     });
   });
 
+
   it('should pass all tests in Firefox Beta', done => {
-    // Firefox Options Docs:
-    var options = new firefox.Options();
-    options.setBinary('./firefox/firefox');
+    fs.lstat('./firefox/', err => {
+      if (err) {
+        console.warn('Local Firefox beta couldn\'t be found. Nothing to test.');
+        return done();
+      }
 
-    driver = new webdriver
-      .Builder()
-      .forBrowser('firefox')
-      .setFirefoxOptions(options)
-      .build();
+      // Firefox Options Docs: http://selenium.googlecode.com/git/docs/api/javascript/module_selenium-webdriver_firefox_class_Options.html
+      var options = new firefox.Options();
+      options.setBinary('./firefox/firefox');
 
-    performTests('Firefox Beta', driver)
-    .then(() => {
-      done();
-    })
-    .catch(err => {
-      done(err);
+      driver = new webdriver
+        .Builder()
+        .forBrowser('firefox')
+        .setFirefoxOptions(options)
+        .build();
+
+      performTests('Firefox Beta', driver)
+      .then(() => {
+        done();
+      })
+      .catch(err => {
+        done(err);
+      });
     });
   });
 });
