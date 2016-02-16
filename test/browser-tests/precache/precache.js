@@ -59,33 +59,26 @@ describe('Test precache method', () => {
     .then(() => done(), done);
   });
 
-  it('should precache a single item in precache-valid', done => {
-    var assetList = [
-      '/test/data/files/text.txt'
-    ];
-    testHelper.activateSW(serviceWorkersFolder + '/single-item.js')
-    .then(() => {
-      return testHelper.getAllCachedAssets('precache-valid');
-    })
-    .then(cachedAssets => {
-      return compareCachedAssets(assetList, cachedAssets);
-    })
-    .then(() => done(), done);
+  it('should throw an error when precaching a string', done => {
+    testHelper.addMessageHandler(function(result) {
+      if (result.testPass) {
+        done();
+      } else {
+        done('Unexpected test result.');
+      }
+    });
+    testHelper.activateSW(serviceWorkersFolder + '/single-item.js');
   });
 
-  it('should precache all desired assets from promises in precache-valid', done => {
-    var assetList = [
-      '/test/data/files/text.txt',
-      '/test/data/files/image.png'
-    ];
-    testHelper.activateSW(serviceWorkersFolder + '/promises.js')
-    .then(() => {
-      return testHelper.getAllCachedAssets('precache-valid');
-    })
-    .then(cachedAssets => {
-      return compareCachedAssets(assetList, cachedAssets);
-    })
-    .then(() => done(), done);
+  it('should throw an error when attempting to precache an array of promises', done => {
+    testHelper.addMessageHandler(function(result) {
+      if (result.testPass) {
+        done();
+      } else {
+        done('Unexpected test result.');
+      }
+    });
+    testHelper.activateSW(serviceWorkersFolder + '/promises.js');
   });
 
   it.skip('should precache all desired assets from arrays of arrays in precache-valid', done => {

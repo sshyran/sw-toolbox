@@ -24,4 +24,22 @@ self.toolbox.options.cache = {
   name: 'precache-valid'
 };
 
-self.toolbox.precache('/test/data/files/text.txt');
+var thrownError = null;
+try {
+  self.toolbox.precache('/test/data/files/text.txt');
+} catch (err) {
+  thrownError = err;
+}
+
+// Send message to all client pages (one of which will be
+// the test page)
+self.clients.matchAll({
+  includeUncontrolled: true
+})
+.then(function(clients) {
+  clients.forEach(function(client) {
+    client.postMessage(JSON.stringify({
+      testPass: (thrownError instanceof TypeError)
+    }));
+  });
+});

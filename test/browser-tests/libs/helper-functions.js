@@ -41,6 +41,8 @@ var createNewIframe = function() {
 };
 
 window.testHelper = {
+  messageListeners: [],
+
   unregisterAllRegistrations: function() {
     return navigator.serviceWorker.getRegistrations()
       .then(registrations => {
@@ -199,6 +201,22 @@ window.testHelper = {
       for (var i = 0; i < iframeList.length; i++) {
         iframeList[i].parentElement.removeChild(iframeList[i]);
       }
+    })
+    .then(() => {
+      window.testHelper.messageListeners.forEach(function(listener) {
+        navigator.serviceWorker.removeEventListener('message', listener);
+      });
     });
+  },
+
+  addMessageHandler: function(cb) {
+    var messageListener = function(event) {
+      var result = JSON.parse(event.data);
+      cb(result);
+    };
+
+    window.testHelper.messageListeners.push(messageListener);
+
+    navigator.serviceWorker.addEventListener('message', messageListener);
   }
 };
